@@ -14,35 +14,34 @@ function App() {
   const timeoutRef = useRef(null);
 
   // Function to generate token
-  const generateToken = useCallback(
-    (newSecret) => {
-      try {
-        const totpToken = TOTP.generate(newSecret);
-        setToken(totpToken);
+  const generateToken = useCallback((newSecret) => {
+    try {
+      const totpToken = TOTP.generate(newSecret);
+      setToken(totpToken);
+      const currentTime = new Date().getTime();
+      const timeRemaining = Math.floor(totpToken.expires - currentTime);
+      setProgress({
+        timeout: timeRemaining,
+        degree: 360,
+      });
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = setInterval(() => {
         const currentTime = new Date().getTime();
-        let timeRemaining = Math.floor(totpToken.expires - currentTime);
-        setProgress({
-          timeout: timeRemaining,
-          degree: 360,
+        const timeRemaining = Math.floor(totpToken.expires - currentTime);
+        setProgress(() => {
+          const timeout = Math.max(0, timeRemaining);
+          if (timeout == 0) {
+            generateToken(newSecret);
+          }
+          const degree = (360 / 30000) * timeout;
+          return { timeout, degree };
         });
-        clearTimeout(timeoutRef.current);
-        timeoutRef.current = setInterval(() => {
-          setProgress((prev) => {
-            const timeout = Math.max(0, prev.timeout - 100);
-            if (timeout == 0) {
-              generateToken(secret);
-            }
-            const degree = (360 / 30000) * timeout;
-            return { timeout, degree };
-          });
-        }, 100);
-      } catch (error) {
-        console.log(error);
-        toast.error(error.message);
-      }
-    },
-    [secret]
-  );
+      }, 100);
+    } catch (error) {
+      console.log(error);
+      toast.error(error.message);
+    }
+  }, []);
 
   useEffect(() => {
     if (secret !== "") {
@@ -72,6 +71,8 @@ function App() {
       generateToken(secret);
     }
   };
+
+  const remainingTime = Math.floor(progress.timeout / 1000);
 
   return (
     <>
@@ -128,9 +129,9 @@ function App() {
                 <div className="text-4xl text-violet-600 font-bold tracking-widest">
                   {token.otp ?? "------"}
                 </div>
-                {progress.timeout >= 0 && (
+                {remainingTime >= 0 && (
                   <div className="text-sm text-zinc-500">
-                    Expires in {Math.floor(progress.timeout / 1000)} seconds
+                    {remainingTime} {remainingTime > 1 ? "seconds" : "second"}
                   </div>
                 )}
               </div>

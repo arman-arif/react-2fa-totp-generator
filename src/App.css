@@ -11,7 +11,7 @@
     #7f22fe var(--border-conic-degree, 0deg),
     #7f22fe
   );
-  --border-width: 7px;
+  --border-width: 15px;
   position: relative;
   border-radius: 50%;
   height: 180px;
