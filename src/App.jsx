@@ -5,6 +5,7 @@ import "./App.css";
 
 function App() {
   const [secret, setSecret] = useState("");
+  const [secretInput, setSecretInput] = useState("");
   const [token, setToken] = useState("");
   const [progress, setProgress] = useState({
     timeout: 0,
@@ -66,6 +67,8 @@ function App() {
   };
 
   const handleOnSubmit = () => {
+    setSecret(secretInput);
+    setSecretInput("");
     resetTotp();
     if (secret !== "") {
       generateToken(secret);
@@ -79,21 +82,17 @@ function App() {
       <div className="container">
         <div className="flex justify-center items-center h-screen">
           <div className="text-center width-[350px] rounded-4xl border-2 border-violet-300 p-4 bg-white z-0">
-            <h1 className="text-xl text-violet-600 font-bold py-3 mb-3 uppercase">
+            <h1 className="text-xl text-violet-600 font-bold py-3 uppercase">
               TOTP Generator
             </h1>
             <div className="px-3">
-              <label htmlFor="secret" className="text-zinc-500">
-                Enter Secret Key:
-              </label>
-              <div className="relative">
+              <div className="w-[300px] mx-auto relative">
                 <input
-                  type="text"
-                  id="secret"
-                  value={secret}
-                  onChange={(e) => setSecret(e.target.value)}
+                  type="password"
+                  value={secretInput}
+                  onChange={(e) => setSecretInput(e.target.value)}
                   placeholder="Enter your secret key"
-                  className="p-2 pr-15 border border-violet-200 rounded-md text-center text-zinc-600 w-[300px]"
+                  className="py-2 pl-3 pr-15 border border-violet-200 rounded-md text-zinc-600 w-full"
                 />
                 <button
                   className="bg-violet-100 text-violet-500 border border-violet-300 hover:bg-violet-200 hover:text-violet-600 rounded-md px-3 py-1 my-1 top-0 right-0 absolute mr-1"
@@ -119,7 +118,10 @@ function App() {
                 </button>
               </div>
             </div>
-            <div className="flex justify-center mt-6 mb-3">
+            <div className="flex flex-col gap-5 items-center justify-center mt-4 mb-3">
+              <div className="text-center text-sm text-zinc-500">
+                Secret: {secret.slice(0, 6)}****{secret.slice(-4)}
+              </div>
               <div
                 className="flex flex-col items-center justify-center gradient-border bg-white"
                 style={{
