@@ -8,7 +8,7 @@
   --border-bg-gradient: conic-gradient(
     #c4b4ff,
     #c4b4ff var(--border-conic-degree, 0deg),
-    #7f22fe var(--border-conic-degree, 0deg),
+    #7f22fe calc(var(--border-conic-degree, 0deg) + 1deg),
     #7f22fe
   );
   --border-width: 15px;

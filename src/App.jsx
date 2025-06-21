@@ -1,5 +1,8 @@
+import * as clipboard from "clipboard-polyfill";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
+import Toastify from "toastify-js";
+import "toastify-js/src/toastify.css";
 import { TOTP } from "totp-generator";
 import "./App.css";
 
@@ -75,6 +78,29 @@ function App() {
     }
   };
 
+  const showToast = (message) => {
+    Toastify({
+      text: message,
+      duration: 1500,
+      gravity: "bottom",
+      position: "center",
+      style: {
+        background: "#000000",
+        borderRadius: "10px",
+      },
+    }).showToast();
+  };
+
+  const handleOnClickCopy = async () => {
+    try {
+      await clipboard.writeText(token.otp);
+      showToast("Copied to clipboard!");
+    } catch (error) {
+      console.log(error);
+      toast.error(error.message);
+    }
+  };
+
   const remainingTime = Math.floor(progress.timeout / 1000);
 
   return (
@@ -120,15 +146,19 @@ function App() {
             </div>
             <div className="flex flex-col gap-5 items-center justify-center mt-4 mb-3">
               <div className="text-center text-sm text-zinc-500">
-                Secret: {secret.slice(0, 6)}****{secret.slice(-4)}
+                <strong>Secret:</strong> {secret.slice(0, 6)}****
+                {secret.slice(-4)}
               </div>
               <div
-                className="flex flex-col items-center justify-center gradient-border bg-white"
+                className="flex flex-col items-center justify-center gradient-border bg-white inset-shadow-md"
                 style={{
                   "--border-conic-degree": `${progress.degree.toFixed(2)}deg`,
                 }}
               >
-                <div className="text-4xl text-violet-600 font-bold tracking-widest">
+                <div
+                  className="text-4xl text-violet-600 font-bold tracking-widest cursor-pointer"
+                  onClick={handleOnClickCopy}
+                >
                   {token.otp ?? "------"}
                 </div>
                 {remainingTime >= 0 && (
