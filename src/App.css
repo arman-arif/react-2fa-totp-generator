@@ -1,0 +1,32 @@
+@import "tailwindcss";
+
+.container {
+  @apply mx-auto h-screen w-[35rem];
+}
+
+.gradient-border {
+  --border-bg-gradient: conic-gradient(
+    #c4b4ff,
+    #c4b4ff var(--border-conic-degree, 0deg),
+    #7f22fe var(--border-conic-degree, 0deg),
+    #7f22fe
+  );
+  --border-width: 7px;
+  position: relative;
+  border-radius: 50%;
+  height: 180px;
+  width: 180px;
+}
+.gradient-border::before {
+  content: "";
+  height: calc(100% + var(--border-width, 1px));
+  width: calc(100% + var(--border-width, 1px));
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background-image: var(--border-bg-gradient);
+  transition: background-image 0.8s linear;
+  z-index: -1;
+}
